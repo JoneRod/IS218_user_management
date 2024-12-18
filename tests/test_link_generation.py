@@ -21,6 +21,11 @@ def normalize_url(url):
     normalized_url = urlunparse(parsed_url._replace(query=encoded_query))
     return normalized_url.rstrip('/')
 
+def test_normalize_url_no_query():
+    url = "http://example.com/path"
+    normalized = normalize_url(url)
+    assert normalized == "http://example.com/path", "Normalization should not alter URLs without query parameters"
+
 
 @pytest.fixture
 def mock_request():
@@ -49,3 +54,17 @@ def test_generate_pagination_links(mock_request):
     assert len(links) >= 4
     expected_self_url = "http://testserver/users?limit=5&skip=10"
     assert normalize_url(str(links[0].href)) == normalize_url(expected_self_url), "Self link should match expected URL"
+
+def test_generate_pagination_links_last_page(mock_request):
+    skip = 45
+    limit = 10
+    total_items = 50
+    links = generate_pagination_links(mock_request, skip, limit, total_items)
+    
+    # Verify only the "prev" link exists besides "self", "first", and "last"
+    expected_last_url = "http://testserver/users?limit=10&skip=45"
+    expected_prev_url = "http://testserver/users?limit=10&skip=35"
+    
+    assert len(links) == 4, "Last page should have 4 links (self, first, last, prev)"
+    assert normalize_url(links[0]["href"]) == normalize_url(expected_last_url), "Self link should match expected last page URL"
+    assert normalize_url(links[3]["href"]) == normalize_url(expected_prev_url), "Prev link should point to the correct page"
