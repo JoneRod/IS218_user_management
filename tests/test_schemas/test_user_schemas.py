@@ -108,3 +108,27 @@ def test_user_base_url_invalid(url, user_base_data):
     user_base_data["profile_picture_url"] = url
     with pytest.raises(ValidationError):
         UserBase(**user_base_data)
+
+# Shared variables for example data
+example_email = "john.doe@example.com"  # Example email
+example_password = "Secure*1234"       # Example password
+
+# Helper function for email validation
+def validate_email_format(email: str):
+    assert "@" in email, "Email should contain '@'"
+    assert email.endswith(".com"), "Email should end with '.com'"
+
+# Helper function for password validation
+def validate_password_format(password: str):
+    assert len(password) >= 8, "Password should be at least 8 characters long"
+    assert any(char.isdigit() for char in password), "Password should contain a number"
+    assert any(char.isupper() for char in password), "Password should contain an uppercase letter"
+    assert any(not char.isalnum() for char in password), "Password should contain a special character"
+
+# Test: Ensure LoginRequest example email and password are valid
+def test_login_request_example_data():
+    login_request = LoginRequest(email=example_email, password=example_password)
+    assert login_request.email == example_email, "Email should match the example"
+    assert login_request.password == example_password, "Password should match the example"
+    validate_email_format(login_request.email)
+    validate_password_format(login_request.password)
