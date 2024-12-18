@@ -8,7 +8,7 @@ from app.schemas.user_schemas import UserBase, UserCreate, UserUpdate, UserRespo
 @pytest.fixture
 def user_base_data():
     return {
-        "nickname": "john_doe_123",
+        "nickname": "sly_fox_734",
         "email": "john.doe@example.com",
         "first_name": "John",
         "last_name": "Doe",
