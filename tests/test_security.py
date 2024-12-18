@@ -1,7 +1,9 @@
 # test_security.py
 from builtins import RuntimeError, ValueError, isinstance, str
 import pytest
-from app.utils.security import hash_password, verify_password
+import secrets
+import bcrypt
+from app.utils.security import hash_password, verify_password, generate_verification_token
 
 def test_hash_password():
     """Test that hashing password returns a bcrypt hashed string."""
@@ -65,3 +67,23 @@ def test_hash_password_internal_error(monkeypatch):
     with pytest.raises(ValueError):
         hash_password("test")
 
+def test_generate_verification_token():
+    """Test the verification token generation."""
+    token = generate_verification_token()
+    assert isinstance(token, str), "The token should be a string."
+    assert len(token) >= 16, "The token should be at least 16 bytes long."
+    assert secrets.token_urlsafe(16) == token[:16], "The token should be URL-safe."
+
+
+@pytest.mark.parametrize("special_password", [
+    "!@#$$%^&*()_+-=[]{}|;':,.<>?/~`",  # Symbols
+    "P@$$w0rd💖",  # Password with emoji
+    "パスワード123",  # Unicode characters
+])
+
+def test_password_with_special_characters(special_password):
+    """Test password hashing and verification with special characters."""
+    hashed = hash_password(special_password)
+    assert isinstance(hashed, str) and hashed.startswith('$2b$'), "Hashed password should be bcrypt format."
+    assert verify_password(special_password, hashed) is True, "Password with special characters should match the hash."
+    assert verify_password("incorrect_password", hashed) is False, "Incorrect password should not match the hash."
