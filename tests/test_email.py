@@ -29,7 +29,12 @@ async def test_send_markdown_email():
     await email_service.send_user_email(user_data, 'email_verification')
 
     # Assert the SMTP client was called with correct arguments
-    smtp_client_mock.send_email.assert_called_once_with("Verify Your Account", "<html>Email Content</html>", "test@example.com")
+    smtp_client_mock.send_email.assert_called_once_with(
+        "Verify Your Account",
+        "<html>Email Content</html>",
+        "test@example.com"
+    )
+
 
 @pytest.mark.asyncio
 async def test_send_user_email_missing_data(email_service):
