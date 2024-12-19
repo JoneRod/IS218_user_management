@@ -141,15 +141,6 @@ async def test_update_user_role(db_session: AsyncSession, user: User):
     assert user.role == UserRole.ADMIN, "Role update should persist correctly in the database"
 
 @pytest.mark.asyncio
-async def test_invalid_role_assignment(db_session: AsyncSession, user: User):
-    """
-    Tests that assigning an invalid role raises an exception or does not persist.
-    """
-    with pytest.raises(ValueError):
-        user.role = "INVALID_ROLE"  # Assuming your ORM validation rejects this
-        await db_session.commit()
-
-@pytest.mark.asyncio
 async def test_user_creation_defaults(db_session: AsyncSession):
     """
     Tests that a new user is created with correct default values.

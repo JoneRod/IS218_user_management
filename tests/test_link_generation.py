@@ -60,11 +60,13 @@ def test_generate_pagination_links_last_page(mock_request):
     limit = 10
     total_items = 50
     links = generate_pagination_links(mock_request, skip, limit, total_items)
-    
+
     # Verify only the "prev" link exists besides "self", "first", and "last"
     expected_last_url = "http://testserver/users?limit=10&skip=45"
     expected_prev_url = "http://testserver/users?limit=10&skip=35"
-    
+
     assert len(links) == 4, "Last page should have 4 links (self, first, last, prev)"
-    assert normalize_url(links[0]["href"]) == normalize_url(expected_last_url), "Self link should match expected last page URL"
-    assert normalize_url(links[3]["href"]) == normalize_url(expected_prev_url), "Prev link should point to the correct page"
+    
+    # Access attributes directly
+    assert normalize_url(links[0].href) == normalize_url(expected_last_url), "Self link should match expected last page URL"
+    assert normalize_url(links[3].href) == normalize_url(expected_prev_url), "Prev link should match expected prev page URL"
