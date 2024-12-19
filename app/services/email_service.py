@@ -30,6 +30,11 @@ class EmailService:
 
         if email_type not in subject_map:
             raise ValueError("Invalid email type")
+        
+        try:
+            subject = subject_map[email_type]
+        except KeyError:
+            raise KeyError(f"Missing data for email type: {email_type}")
 
         html_content = self.template_manager.render_template(email_type, **user_data)
         self.smtp_client.send_email(subject_map[email_type], html_content, user_data['email'])

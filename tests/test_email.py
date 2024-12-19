@@ -42,7 +42,6 @@ async def test_send_user_email_missing_data(email_service):
 
     with pytest.raises(KeyError, match="name"):
         await email_service.send_user_email(incomplete_user_data, 'email_verification')
-        raise
 
 
 @pytest.mark.asyncio
