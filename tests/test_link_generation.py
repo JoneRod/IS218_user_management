@@ -66,7 +66,7 @@ def test_generate_pagination_links_last_page(mock_request):
     expected_prev_url = "http://testserver/users?limit=10&skip=35"
 
     assert len(links) == 4, "Last page should have 4 links (self, first, last, prev)"
-    
-    # Access attributes directly
-    assert normalize_url(links[0].href) == normalize_url(expected_last_url), "Self link should match expected last page URL"
-    assert normalize_url(links[3].href) == normalize_url(expected_prev_url), "Prev link should match expected prev page URL"
+
+    # Convert href to a string before passing it to normalize_url
+    assert normalize_url(str(links[0].href)) == normalize_url(expected_last_url), "Self link should match expected last page URL"
+    assert normalize_url(str(links[3].href)) == normalize_url(expected_prev_url), "Prev link should match expected prev page URL"

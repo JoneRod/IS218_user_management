@@ -67,13 +67,14 @@ def test_hash_password_internal_error(monkeypatch):
     with pytest.raises(ValueError):
         hash_password("test")
 
+from unittest.mock import patch
+
 def test_generate_verification_token():
     """Test the verification token generation."""
-    token = generate_verification_token()
-    assert isinstance(token, str), "The token should be a string."
-    assert len(token) >= 16, "The token should be at least 16 bytes long."
-    assert secrets.token_urlsafe(16) == token[:16], "The token should be URL-safe."
-
+    with patch('secrets.token_urlsafe', return_value="mocked_token_value") as mock_token:
+        token = generate_verification_token()
+        mock_token.assert_called_once_with(16)  # Ensure it's called with the expected parameter
+        assert token == "mocked_token_value", "The token should match the mocked value."
 
 @pytest.mark.parametrize("special_password", [
     "!@#$$%^&*()_+-=[]{}|;':,.<>?/~`",  # Symbols

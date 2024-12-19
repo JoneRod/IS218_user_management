@@ -29,21 +29,21 @@ async def test_send_markdown_email():
     await email_service.send_user_email(user_data, 'email_verification')
 
     # Assert the SMTP client was called with correct arguments
-    smtp_client_mock.send_email.assert_called_once_with(
-        "Verify Your Account", "<html>Email Content</html>", "test@example.com"
-    )
-
+    smtp_client_mock.send_email.assert_called_once_with("Verify Your Account", "<html>Email Content</html>", "test@example.com")
 
 @pytest.mark.asyncio
 async def test_send_user_email_missing_data(email_service):
     """Test sending an email with missing user data keys."""
     incomplete_user_data = {"email": "test@example.com"}  # Missing 'name' and 'verification_url'
 
-    # Mock the template rendering to raise KeyError when a key is missing
+    # Mock the template_manager and its render_template method
+    email_service.template_manager = AsyncMock()
     email_service.template_manager.render_template.side_effect = KeyError("name")
 
-    with pytest.raises(KeyError, match=".*name.*"):
+    with pytest.raises(KeyError, match="name"):
         await email_service.send_user_email(incomplete_user_data, 'email_verification')
+        raise
+
 
 @pytest.mark.asyncio
 async def test_send_user_email_invalid_email_type():
